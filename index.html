@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninja Rooftop Runner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            background: linear-gradient(to bottom, #0f3460, #1a1a2e);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        
+        .score-container, .coins-container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 800px;
+        }
+        
+        .controls p {
+            margin-bottom: 10px;
+        }
+        
+        .btn {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: #ff6b81;
+            transform: scale(1.05);
+        }
+        
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+        
+        .title {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #e94560;
+            text-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
+        }
+        
+        .subtitle {
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .game-over {
+            font-size: 36px;
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+        
+        .final-score {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            margin-top: 20px;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        .coin-icon {
+            color: gold;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ninja Rooftop Runner</h1>
+    
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="ui-overlay">
+            <div class="score-container">
+                <span>Score:</span>
+                <span id="score">0</span>
+            </div>
+            <div class="coins-container">
+                <span class="coin-icon">🪙</span>
+                <span id="coins">0</span>
+            </div>
+        </div>
+        
+        <div id="startScreen" class="screen">
+            <h2 class="title">Ninja Rooftop Runner</h2>
+            <p class="subtitle">Tap or click to jump between buildings</p>
+            <button id="startBtn" class="btn">Start Game</button>
+            
+            <div class="instructions">
+                <p>Avoid birds and bombs, collect coins, and survive as long as possible!</p>
+                <p>Gaps between buildings will get wider as your score increases.</p>
+            </div>
+        </div>
+        
+        <div id="gameOverScreen" class="screen hidden">
+            <h2 class="game-over">Game Over!</h2>
+            <p class="final-score">Your Score: <span id="finalScore">0</span></p>
+            <p class="final-score">Coins Collected: <span id="finalCoins">0</span></p>
+            <button id="restartBtn" class="btn">Play Again</button>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <p>Click or tap to make the ninja jump. Avoid obstacles and collect coins!</p>
+        <p>Survive as long as possible. The game gets harder as you progress.</p>
+    </div>
+
+    <script>
+        // Game variables
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startScreen = document.getElementById('startScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const scoreElement = document.getElementById('score');
+        const coinsElement = document.getElementById('coins');
+        const finalScoreElement = document.getElementById('finalScore');
+        const finalCoinsElement = document.getElementById('finalCoins');
+        
+        // Set canvas dimensions
+        canvas.width = 800;
+        canvas.height = 500;
+        
+        // Game state
+        let game = {
+            running: false,
+            score: 0,
+            coins: 0,
+            speed: 5,
+            gravity: 0.5,
+            jumpStrength: 12,
+            gapSize: 200,
+            minGap: 150,
+            buildingWidth: 100,
+            lastBuildingX: 400,
+            buildings: [],
+            obstacles: [],
+            coinsList: [],
+            clouds: [],
+            gameOver: false
+        };
+        
+        // Ninja character
+        const ninja = {
+            x: 100,
+            y: 300,
+            width: 40,
+            height: 60,
+            velocityY: 0,
+            jumping: false,
+            color: '#2a2a2a',
+            canJump: true
+        };
+
+        // Initialize clouds
+        function initClouds() {
+            game.clouds = [];
+            for (let i = 0; i < 5; i++) {
+                game.clouds.push({
+                    x: Math.random() * canvas.width,
+                    y: 30 + Math.random() * 100,
+                    width: 60 + Math.random() * 40,
+                    height: 30 + Math.random() * 20,
+                    speed: 0.5 + Math.random() * 0.5
+                });
+            }
+        }
+        
+        // Initialize game
+        function init() {
+            game.running = false;
+            game.score = 0;
+            game.coins = 0;
+            game.speed = 5;
+            game.gapSize = 200;
+            game.buildings = [];
+            game.obstacles = [];
+            game.coinsList = [];
+            game.gameOver = false;
+            game.lastBuildingX = 400;
+            
+            ninja.x = 100;
+            ninja.y = 300;
+            ninja.velocityY = 0;
+            ninja.jumping = false;
+            ninja.canJump = true;
+            
+            initClouds();
+            
+            // Create initial buildings
+            game.buildings.push({
+                x: 0,
+                width: 200,
+                height: 150,
+                color: '#1f4068',
+                windows: true,
+                hasCoin: true,
+                hasObstacle: false
+            });
+            
+            game.buildings.push({
+                x: 400,
+                width: 150,
+                height: 180,
+                color: '#2c5288',
+                windows: true,
+                hasCoin: false,
+                hasObstacle: true
+            });
+            
+            updateScore();
+        }
+        
+        // Generate a new building
+        function generateBuilding() {
+            const gap = game.gapSize + Math.random() * 50;
+            const width = 80 + Math.random() * 120;
+            const height = 150 + Math.random() * 100;
+            const colors = ['#1f4068', '#2c5288', '#3a6496', '#1a3658'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Ensure coins and obstacles don't spawn on same building
+            const hasCoin = Math.random() < 0.6;
+            const hasObstacle = !hasCoin && Math.random() < 0.5;
+            
+            const newBuilding = {
+                x: game.lastBuildingX + gap,
+                width: width,
+                height: height,
+                color: color,
+                windows: Math.random() > 0.2,
+                hasCoin: hasCoin,
+                hasObstacle: hasObstacle
+            };
+            
+            game.buildings.push(newBuilding);
+            game.lastBuildingX += gap + width;
+            
+            // Generate coins on the rooftop if building has coin
+            if (newBuilding.hasCoin) {
+                const coinCount = 1 + Math.floor(Math.random() * 3);
+                for (let i = 0; i < coinCount; i++) {
+                    game.coinsList.push({
+                        x: newBuilding.x + 20 + (i * 30),
+                        y: canvas.height - newBuilding.height - 25,
+                        width: 15,
+                        height: 15,
+                        collected: false,
+                        building: newBuilding
+                    });
+                }
+            }
+            
+            // Generate obstacles on the rooftop if building has obstacle
+            if (newBuilding.hasObstacle) {
+                const obstacleType = Math.random() < 0.5 ? 'bird' : 'bomb';
+                game.obstacles.push({
+                    x: newBuilding.x + newBuilding.width/2 - 15,
+                    y: canvas.height - newBuilding.height - 30,
+                    width: 30,
+                    height: 30,
+                    type: obstacleType,
+                    building: newBuilding
+                });
+            }
+        }
+
+        // Draw clouds
+        function drawClouds() {
+            game.clouds.forEach(cloud => {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(cloud.x, cloud.y, cloud.width/3, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width/3, cloud.y - cloud.height/4, cloud.width/4, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width/2, cloud.y, cloud.width/3, 0, Math.PI * 2);
+                ctx.arc(cloud.x + cloud.width/1.5, cloud.y - cloud.height/4, cloud.width/4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Move clouds
+                cloud.x -= cloud.speed;
+                if (cloud.x + cloud.width < 0) {
+                    cloud.x = canvas.width + cloud.width;
+                    cloud.y = 30 + Math.random() * 100;
+                }
+            });
+        }
+
+        // Draw half moon
+        function drawMoon() {
+            ctx.fillStyle = '#f8f9fa';
+            ctx.beginPath();
+            ctx.arc(700, 80, 30, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Create crescent effect
+            ctx.fillStyle = '#0f3460';
+            ctx.beginPath();
+            ctx.arc(710, 80, 28, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw detailed building
+        function drawBuilding(building) {
+            // Main building
+            ctx.fillStyle = building.color;
+            ctx.fillRect(building.x, canvas.height - building.height, building.width, building.height);
+            
+            // Building top/roof
+            ctx.fillStyle = '#16213e';
+            ctx.fillRect(building.x, canvas.height - building.height, building.width, 15);
+            
+            // Roof details
+            ctx.fillStyle = '#0f172a';
+            for (let i = 0; i < building.width; i += 10) {
+                ctx.fillRect(building.x + i, canvas.height - building.height, 5, 5);
+            }
+            
+            // Windows if enabled
+            if (building.windows) {
+                const windowRows = Math.floor(building.height / 40);
+                const windowCols = Math.floor(building.width / 30);
+                
+                for (let row = 0; row < windowRows; row++) {
+                    for (let col = 0; col < windowCols; col++) {
+                        if (Math.random() > 0.3) { // Some windows are lit
+                            ctx.fillStyle = Math.random() > 0.7 ? '#ffd166' : '#4cc9f0';
+                            ctx.fillRect(
+                                building.x + 10 + col * 30,
+                                canvas.height - building.height + 20 + row * 40,
+                                15,
+                                20
+                            );
+                        }
+                    }
+                }
+            }
+            
+            // Building side details
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(building.x, canvas.height - building.height, building.width, building.height);
+        }
+        
+        // Draw detailed ninja
+        function drawNinja() {
+            // Ninja body
+            ctx.fillStyle = '#2a2a2a';
+            ctx.fillRect(ninja.x, ninja.y, ninja.width, ninja.height);
+            
+            // Ninja head
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(ninja.x + 5, ninja.y - 10, ninja.width - 10, 15);
+            
+            // Ninja mask
+            ctx.fillStyle = '#e94560';
+            ctx.fillRect(ninja.x, ninja.y - 5, ninja.width, 10);
+            
+            // Ninja eyes
+            ctx.fillStyle = 'white';
+            ctx.fillRect(ninja.x + 8, ninja.y - 3, 8, 5);
+            ctx.fillRect(ninja.x + 24, ninja.y - 3, 8, 5);
+            
+            // Ninja limbs
+            ctx.fillStyle = '#2a2a2a';
+            // Arms
+            ctx.fillRect(ninja.x - 5, ninja.y + 10, 5, 25);
+            ctx.fillRect(ninja.x + ninja.width, ninja.y + 10, 5, 25);
+            // Legs
+            ctx.fillRect(ninja.x + 5, ninja.y + ninja.height, 10, 20);
+            ctx.fillRect(ninja.x + 25, ninja.y + ninja.height, 10, 20);
+            
+            // Sword on back
+            ctx.fillStyle = '#cccccc';
+            ctx.fillRect(ninja.x - 8, ninja.y + 5, 3, 30);
+            ctx.fillStyle = '#ffd166';
+            ctx.fillRect(ninja.x - 10, ninja.y + 5, 7, 5);
+        }
+        
+        // Update game state
+        function update() {
+            if (!game.running || game.gameOver) return;
+            
+            // Move buildings and obstacles
+            game.buildings.forEach(building => {
+                building.x -= game.speed;
+            });
+            
+            game.obstacles.forEach(obstacle => {
+                obstacle.x -= game.speed;
+            });
+            
+            game.coinsList.forEach(coin => {
+                coin.x -= game.speed;
+            });
+            
+            // Remove off-screen elements
+            game.buildings = game.buildings.filter(building => building.x + building.width > 0);
+            game.obstacles = game.obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
+            game.coinsList = game.coinsList.filter(coin => coin.x + coin.width > 0);
+            
+            // Generate new buildings as needed
+            while (game.buildings.length < 10) {
+                generateBuilding();
+            }
+            
+            // Apply gravity to ninja
+            ninja.velocityY += game.gravity;
+            ninja.y += ninja.velocityY;
+            
+            // Check if ninja is on a building
+            let onBuilding = false;
+            for (const building of game.buildings) {
+                if (ninja.x + ninja.width > building.x && 
+                    ninja.x < building.x + building.width &&
+                    ninja.y + ninja.height >= canvas.height - building.height - 5 &&
+                    ninja.y + ninja.height <= canvas.height - building.height + 10) {
+                    
+                    ninja.y = canvas.height - building.height - ninja.height;
+                    ninja.velocityY = 0;
+                    ninja.jumping = false;
+                    ninja.canJump = true;
+                    onBuilding = true;
+                    break;
+                }
+            }
+            
+            // If ninja is not on a building and not jumping, start falling
+            if (!onBuilding && !ninja.jumping) {
+                ninja.jumping = true;
+            }
+            
+            // Check for collisions with obstacles
+            for (const obstacle of game.obstacles) {
+                if (isColliding(ninja, obstacle)) {
+                    gameOver();
+                    return;
+                }
+            }
+            
+            // Check for coin collection
+            for (const coin of game.coinsList) {
+                if (!coin.collected && isColliding(ninja, coin)) {
+                    coin.collected = true;
+                    game.coins++;
+                    coinsElement.textContent = game.coins;
+                }
+            }
+            
+            // Check if ninja fell off the screen
+            if (ninja.y > canvas.height) {
+                gameOver();
+                return;
+            }
+            
+            // Increase score
+            game.score++;
+            updateScore();
+            
+            // Increase difficulty
+            if (game.score % 500 === 0) {
+                game.speed += 0.5;
+            }
+            
+            if (game.score % 1000 === 0 && game.gapSize > game.minGap) {
+                game.gapSize -= 10;
+            }
+        }
+        
+        // Check collision between two objects
+        function isColliding(obj1, obj2) {
+            return obj1.x < obj2.x + obj2.width &&
+                   obj1.x + obj1.width > obj2.x &&
+                   obj1.y < obj2.y + obj2.height &&
+                   obj1.y + obj1.height > obj2.y;
+        }
+        
+        // Draw game elements
+        function draw() {
+            // Clear canvas with gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0f3460');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw stars
+            ctx.fillStyle = 'white';
+            for (let i = 0; i < 50; i++) {
+                ctx.fillRect(Math.random() * canvas.width, Math.random() * 150, 2, 2);
+            }
+            
+            // Draw moon and clouds
+            drawMoon();
+            drawClouds();
+            
+            // Draw buildings
+            game.buildings.forEach(building => {
+                drawBuilding(building);
+            });
+            
+            // Draw obstacles
+            game.obstacles.forEach(obstacle => {
+                if (obstacle.type === 'bird') {
+                    // Bird body
+                    ctx.fillStyle = '#4cc9f0';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, obstacle.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Bird beak
+                    ctx.fillStyle = '#ff9e00';
+                    ctx.beginPath();
+                    ctx.moveTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height/2);
+                    ctx.lineTo(obstacle.x + obstacle.width + 8, obstacle.y + obstacle.height/2);
+                    ctx.lineTo(obstacle.x + obstacle.width, obstacle.y + obstacle.height/2 + 5);
+                    ctx.fill();
+                    
+                    // Bird wings
+                    ctx.fillStyle = '#3a86ff';
+                    ctx.beginPath();
+                    ctx.ellipse(obstacle.x + obstacle.width/2 - 8, obstacle.y + obstacle.height/2, 10, 6, 0, 0, Math.PI * 2);
+                    ctx.ellipse(obstacle.x + obstacle.width/2 + 8, obstacle.y + obstacle.height/2, 10, 6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Bomb body
+                    ctx.fillStyle = '#333';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, obstacle.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Bomb shine
+                    ctx.fillStyle = '#555';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width/2 - 5, obstacle.y + obstacle.height/2 - 5, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Bomb fuse
+                    ctx.fillStyle = '#ff9e00';
+                    ctx.fillRect(obstacle.x + obstacle.width/2 - 2, obstacle.y - 12, 4, 12);
+                    
+                    // Bomb fuse spark
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.beginPath();
+                    ctx.arc(obstacle.x + obstacle.width/2, obstacle.y - 15, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+            
+            // Draw coins with shine effect
+            game.coinsList.forEach(coin => {
+                if (!coin.collected) {
+                    // Coin outer
+                    ctx.fillStyle = 'gold';
+                    ctx.beginPath();
+                    ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2, coin.width/2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Coin inner
+                    ctx.fillStyle = 'orange';
+                    ctx.beginPath();
+                    ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2, coin.width/3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Coin shine
+                    ctx.fillStyle = 'white';
+                    ctx.beginPath();
+                    ctx.arc(coin.x + coin.width/2 - 3, coin.y + coin.height/2 - 3, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Floating animation
+                    coin.y = canvas.height - coin.building.height - 25 + Math.sin(game.score * 0.1) * 3;
+                }
+            });
+            
+            // Draw ninja
+            drawNinja();
+        }
+        
+        // Game loop
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Jump function
+        function jump() {
+            if (!game.running || game.gameOver) return;
+            
+            // Allow jumping if not already in a jump
+            if (ninja.canJump) {
+                ninja.velocityY = -game.jumpStrength;
+                ninja.jumping = true;
+                ninja.canJump = false;
+            }
+        }
+        
+        // Update score display
+        function updateScore() {
+            scoreElement.textContent = Math.floor(game.score / 10);
+        }
+        
+        // Game over function
+        function gameOver() {
+            game.gameOver = true;
+            game.running = false;
+            
+            finalScoreElement.textContent = Math.floor(game.score / 10);
+            finalCoinsElement.textContent = game.coins;
+            
+            setTimeout(() => {
+                gameOverScreen.classList.remove('hidden');
+            }, 500);
+        }
+        
+        // Start game function
+        function startGame() {
+            init();
+            game.running = true;
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+        
+        canvas.addEventListener('click', jump);
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+        
+        // Add touch event for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        // Start the game loop
+        gameLoop();
+        
+        // Initialize the game
+        init();
+    </script>
+</body>
+</html>
