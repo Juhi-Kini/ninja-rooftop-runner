@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ninja Rooftop Runner</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
         }
         
         body {
@@ -19,19 +25,28 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
-            overflow: hidden;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+        
+        h1 {
+            font-size: clamp(24px, 5vw, 36px);
+            margin: 10px 0;
+            text-align: center;
         }
         
         .game-container {
             position: relative;
-            width: 800px;
-            height: 500px;
+            width: 100%;
+            max-width: 800px;
+            height: 60vh;
+            min-height: 400px;
+            max-height: 500px;
             background: linear-gradient(to bottom, #0f3460, #1a1a2e);
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         
         #gameCanvas {
@@ -45,7 +60,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
@@ -53,26 +68,29 @@
         
         .score-container, .coins-container {
             background: rgba(0, 0, 0, 0.6);
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 20px;
-            font-size: 18px;
+            font-size: clamp(14px, 3vw, 18px);
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .controls {
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
             background: rgba(0, 0, 0, 0.6);
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
             max-width: 800px;
+            width: 100%;
         }
         
         .controls p {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: clamp(14px, 3vw, 16px);
+            line-height: 1.4;
         }
         
         .btn {
@@ -80,12 +98,13 @@
             color: white;
             border: none;
             padding: 12px 25px;
-            font-size: 18px;
+            font-size: clamp(16px, 4vw, 18px);
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
             margin-top: 10px;
+            min-width: 140px;
         }
         
         .btn:hover {
@@ -105,19 +124,22 @@
             align-items: center;
             background: rgba(0, 0, 0, 0.8);
             z-index: 10;
+            padding: 20px;
+            text-align: center;
         }
         
         .title {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: clamp(32px, 8vw, 48px);
+            margin-bottom: 15px;
             color: #e94560;
             text-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
         }
         
         .subtitle {
-            font-size: 24px;
-            margin-bottom: 30px;
+            font-size: clamp(18px, 4vw, 24px);
+            margin-bottom: 20px;
             text-align: center;
+            line-height: 1.4;
         }
         
         .hidden {
@@ -125,26 +147,104 @@
         }
         
         .game-over {
-            font-size: 36px;
+            font-size: clamp(28px, 6vw, 36px);
             color: #e94560;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .final-score {
-            font-size: 24px;
-            margin-bottom: 30px;
+            font-size: clamp(18px, 4vw, 24px);
+            margin-bottom: 20px;
         }
         
         .instructions {
-            margin-top: 20px;
+            margin-top: 15px;
             max-width: 600px;
             text-align: center;
             line-height: 1.6;
+            font-size: clamp(14px, 3vw, 16px);
         }
         
         .coin-icon {
             color: gold;
-            font-size: 20px;
+            font-size: clamp(16px, 3vw, 20px);
+        }
+
+        /* Mobile-specific controls */
+        .mobile-controls {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            justify-content: center;
+            gap: 20px;
+            pointer-events: none;
+        }
+
+        .jump-btn {
+            width: 80px;
+            height: 80px;
+            background: rgba(233, 69, 96, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            pointer-events: auto;
+            cursor: pointer;
+            border: 3px solid white;
+            user-select: none;
+        }
+
+        /* Show mobile controls only on touch devices */
+        @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+            .mobile-controls {
+                display: flex;
+            }
+            
+            .controls p:last-child {
+                display: none;
+            }
+        }
+
+        /* Adjust for very small screens */
+        @media (max-width: 480px) {
+            .game-container {
+                height: 50vh;
+                min-height: 350px;
+            }
+            
+            .jump-btn {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .ui-overlay {
+                padding: 8px 12px;
+            }
+            
+            .score-container, .coins-container {
+                padding: 6px 12px;
+            }
+        }
+
+        /* Landscape orientation adjustments */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .game-container {
+                height: 80vh;
+                max-height: 300px;
+            }
+            
+            h1 {
+                display: none;
+            }
+            
+            .controls {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -163,6 +263,11 @@
                 <span class="coin-icon">🪙</span>
                 <span id="coins">0</span>
             </div>
+        </div>
+
+        <!-- Mobile jump button -->
+        <div class="mobile-controls">
+            <div class="jump-btn">TAP TO JUMP</div>
         </div>
         
         <div id="startScreen" class="screen">
@@ -201,10 +306,20 @@
         const coinsElement = document.getElementById('coins');
         const finalScoreElement = document.getElementById('finalScore');
         const finalCoinsElement = document.getElementById('finalCoins');
+        const jumpBtn = document.querySelector('.jump-btn');
         
-        // Set canvas dimensions
-        canvas.width = 800;
-        canvas.height = 500;
+        // Set canvas dimensions based on container
+        function setCanvasSize() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            
+            // Adjust game elements based on screen size
+            const isMobile = window.innerWidth <= 768;
+            game.ninjaSize = isMobile ? 30 : 40;
+            game.buildingMinHeight = isMobile ? 100 : 150;
+            game.initialGapSize = isMobile ? 150 : 200;
+        }
         
         // Game state
         let game = {
@@ -222,7 +337,10 @@
             obstacles: [],
             coinsList: [],
             clouds: [],
-            gameOver: false
+            gameOver: false,
+            ninjaSize: 40,
+            buildingMinHeight: 150,
+            initialGapSize: 200
         };
         
         // Ninja character
@@ -240,32 +358,38 @@
         // Initialize clouds
         function initClouds() {
             game.clouds = [];
-            for (let i = 0; i < 5; i++) {
+            const cloudCount = window.innerWidth <= 768 ? 3 : 5;
+            for (let i = 0; i < cloudCount; i++) {
                 game.clouds.push({
                     x: Math.random() * canvas.width,
                     y: 30 + Math.random() * 100,
-                    width: 60 + Math.random() * 40,
-                    height: 30 + Math.random() * 20,
-                    speed: 0.5 + Math.random() * 0.5
+                    width: 40 + Math.random() * 40,
+                    height: 20 + Math.random() * 20,
+                    speed: 0.3 + Math.random() * 0.5
                 });
             }
         }
         
         // Initialize game
         function init() {
+            setCanvasSize();
+            
             game.running = false;
             game.score = 0;
             game.coins = 0;
             game.speed = 5;
-            game.gapSize = 200;
+            game.gapSize = game.initialGapSize;
             game.buildings = [];
             game.obstacles = [];
             game.coinsList = [];
             game.gameOver = false;
-            game.lastBuildingX = 400;
+            game.lastBuildingX = canvas.width * 0.5;
             
+            // Adjust ninja size for mobile
+            ninja.width = game.ninjaSize;
+            ninja.height = game.ninjaSize * 1.5;
             ninja.x = 100;
-            ninja.y = 300;
+            ninja.y = canvas.height * 0.6;
             ninja.velocityY = 0;
             ninja.jumping = false;
             ninja.canJump = true;
@@ -275,8 +399,8 @@
             // Create initial buildings
             game.buildings.push({
                 x: 0,
-                width: 200,
-                height: 150,
+                width: canvas.width * 0.3,
+                height: game.buildingMinHeight + Math.random() * 50,
                 color: '#1f4068',
                 windows: true,
                 hasCoin: true,
@@ -284,9 +408,9 @@
             });
             
             game.buildings.push({
-                x: 400,
-                width: 150,
-                height: 180,
+                x: canvas.width * 0.5,
+                width: canvas.width * 0.2,
+                height: game.buildingMinHeight + Math.random() * 80,
                 color: '#2c5288',
                 windows: true,
                 hasCoin: false,
@@ -300,7 +424,7 @@
         function generateBuilding() {
             const gap = game.gapSize + Math.random() * 50;
             const width = 80 + Math.random() * 120;
-            const height = 150 + Math.random() * 100;
+            const height = game.buildingMinHeight + Math.random() * 100;
             const colors = ['#1f4068', '#2c5288', '#3a6496', '#1a3658'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             
@@ -372,15 +496,16 @@
 
         // Draw half moon
         function drawMoon() {
+            const moonSize = canvas.width * 0.05;
             ctx.fillStyle = '#f8f9fa';
             ctx.beginPath();
-            ctx.arc(700, 80, 30, 0, Math.PI * 2);
+            ctx.arc(canvas.width - 80, 60, moonSize, 0, Math.PI * 2);
             ctx.fill();
             
             // Create crescent effect
             ctx.fillStyle = '#0f3460';
             ctx.beginPath();
-            ctx.arc(710, 80, 28, 0, Math.PI * 2);
+            ctx.arc(canvas.width - 70, 60, moonSize - 2, 0, Math.PI * 2);
             ctx.fill();
         }
         
@@ -710,6 +835,7 @@
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
         
+        // Desktop controls
         canvas.addEventListener('click', jump);
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
@@ -718,10 +844,26 @@
             }
         });
         
-        // Add touch event for mobile
+        // Mobile controls
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             jump();
+        });
+        
+        // Mobile jump button
+        if (jumpBtn) {
+            jumpBtn.addEventListener('click', jump);
+            jumpBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                jump();
+            });
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (!game.running) {
+                init();
+            }
         });
         
         // Start the game loop
