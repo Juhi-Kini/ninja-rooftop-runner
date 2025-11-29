@@ -25,25 +25,25 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 10px;
+            padding: 15px;
             overflow-x: hidden;
         }
         
         h1 {
-            font-size: clamp(24px, 5vw, 36px);
-            margin: 10px 0;
+            font-size: 28px;
+            margin: 15px 0;
             text-align: center;
+            color: #e94560;
         }
         
         .game-container {
             position: relative;
             width: 100%;
             max-width: 800px;
-            height: 60vh;
+            height: 55vh;
             min-height: 400px;
-            max-height: 500px;
             background: linear-gradient(to bottom, #0f3460, #1a1a2e);
-            border-radius: 10px;
+            border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             margin-top: 10px;
@@ -60,17 +60,17 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 10px 15px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
         }
         
         .score-container, .coins-container {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 15px;
             border-radius: 20px;
-            font-size: clamp(14px, 3vw, 18px);
+            font-size: 16px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -78,18 +78,18 @@
         }
         
         .controls {
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: center;
             background: rgba(0, 0, 0, 0.6);
-            padding: 12px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 12px;
             max-width: 800px;
             width: 100%;
         }
         
         .controls p {
             margin-bottom: 8px;
-            font-size: clamp(14px, 3vw, 16px);
+            font-size: 14px;
             line-height: 1.4;
         }
         
@@ -97,14 +97,14 @@
             background: #e94560;
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: clamp(16px, 4vw, 18px);
-            border-radius: 30px;
+            padding: 14px 30px;
+            font-size: 16px;
+            border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: bold;
-            margin-top: 10px;
-            min-width: 140px;
+            margin-top: 15px;
+            width: 200px;
         }
         
         .btn:hover {
@@ -122,21 +122,21 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
         }
         
         .title {
-            font-size: clamp(32px, 8vw, 48px);
+            font-size: 32px;
             margin-bottom: 15px;
             color: #e94560;
             text-shadow: 0 0 10px rgba(233, 69, 96, 0.7);
         }
         
         .subtitle {
-            font-size: clamp(18px, 4vw, 24px);
+            font-size: 18px;
             margin-bottom: 20px;
             text-align: center;
             line-height: 1.4;
@@ -147,27 +147,107 @@
         }
         
         .game-over {
-            font-size: clamp(28px, 6vw, 36px);
+            font-size: 28px;
             color: #e94560;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .final-score {
-            font-size: clamp(18px, 4vw, 24px);
+            font-size: 18px;
             margin-bottom: 20px;
         }
         
         .instructions {
-            margin-top: 15px;
-            max-width: 600px;
+            margin-top: 20px;
+            max-width: 500px;
             text-align: center;
-            line-height: 1.6;
-            font-size: clamp(14px, 3vw, 16px);
+            line-height: 1.5;
+            font-size: 14px;
         }
         
         .coin-icon {
             color: gold;
-            font-size: clamp(16px, 3vw, 20px);
+            font-size: 18px;
+        }
+
+        /* Character Selection */
+        .character-selection {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 500px;
+        }
+        
+        .character-option {
+            width: 70px;
+            height: 90px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .character-option:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .character-option.selected {
+            border-color: #e94560;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.7);
+            background: rgba(233, 69, 96, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .character-preview {
+            width: 45px;
+            height: 55px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .character-name {
+            font-size: 11px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* Username Input */
+        .username-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .username-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #4cc9f0;
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 16px;
+            width: 250px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .username-input::placeholder {
+            color: #ccc;
+        }
+        
+        .username-label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #4cc9f0;
         }
 
         /* Mobile-specific controls */
@@ -185,18 +265,30 @@
         .jump-btn {
             width: 80px;
             height: 80px;
-            background: rgba(233, 69, 96, 0.7);
+            background: rgba(233, 69, 96, 0.8);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: white;
             pointer-events: auto;
             cursor: pointer;
             border: 3px solid white;
-            user-select: none;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #ccc;
+            width: 100%;
+            max-width: 800px;
         }
 
         /* Show mobile controls only on touch devices */
@@ -210,31 +302,69 @@
             }
         }
 
-        /* Adjust for very small screens */
+        /* Mobile adjustments */
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin: 10px 0;
+            }
+            
             .game-container {
                 height: 50vh;
                 min-height: 350px;
             }
             
+            .character-option {
+                width: 60px;
+                height: 80px;
+            }
+            
+            .character-preview {
+                width: 40px;
+                height: 50px;
+            }
+            
+            .character-name {
+                font-size: 10px;
+            }
+            
+            .character-selection {
+                gap: 8px;
+            }
+            
             .jump-btn {
                 width: 70px;
                 height: 70px;
+                font-size: 12px;
             }
             
-            .ui-overlay {
-                padding: 8px 12px;
+            .title {
+                font-size: 28px;
             }
             
-            .score-container, .coins-container {
-                padding: 6px 12px;
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .username-input {
+                width: 220px;
+                padding: 10px 15px;
+            }
+            
+            .btn {
+                width: 180px;
+                padding: 12px 25px;
             }
         }
 
         /* Landscape orientation adjustments */
         @media (max-height: 500px) and (orientation: landscape) {
             .game-container {
-                height: 80vh;
+                height: 75vh;
                 max-height: 300px;
             }
             
@@ -244,6 +374,20 @@
             
             .controls {
                 display: none;
+            }
+            
+            .character-selection {
+                margin: 15px 0;
+            }
+            
+            .character-option {
+                width: 55px;
+                height: 70px;
+            }
+            
+            .character-preview {
+                width: 35px;
+                height: 45px;
             }
         }
     </style>
@@ -272,8 +416,39 @@
         
         <div id="startScreen" class="screen">
             <h2 class="title">Ninja Rooftop Runner</h2>
-            <p class="subtitle">Tap or click to jump between buildings</p>
-            <button id="startBtn" class="btn">Start Game</button>
+            <p class="subtitle">Create Your Ninja!</p>
+            
+            <!-- Username Input -->
+            <div class="username-section">
+                <div class="username-label">Enter Your Ninja Name:</div>
+                <input type="text" id="usernameInput" class="username-input" placeholder="Enter your name" maxlength="12">
+            </div>
+            
+            <!-- Character Selection -->
+            <div class="character-selection">
+                <div class="character-option selected" data-color="#4cc9f0">
+                    <div class="character-preview" id="preview-blue"></div>
+                    <div class="character-name">Blue</div>
+                </div>
+                <div class="character-option" data-color="#e94560">
+                    <div class="character-preview" id="preview-red"></div>
+                    <div class="character-name">Red</div>
+                </div>
+                <div class="character-option" data-color="#ffd700">
+                    <div class="character-preview" id="preview-yellow"></div>
+                    <div class="character-name">Yellow</div>
+                </div>
+                <div class="character-option" data-color="#32cd32">
+                    <div class="character-preview" id="preview-green"></div>
+                    <div class="character-name">Green</div>
+                </div>
+                <div class="character-option" data-color="#9370db">
+                    <div class="character-preview" id="preview-purple"></div>
+                    <div class="character-name">Purple</div>
+                </div>
+            </div>
+            
+            <button id="startBtn" class="btn">Start Mission</button>
             
             <div class="instructions">
                 <p>Avoid birds and bombs, collect coins, and survive as long as possible!</p>
@@ -282,16 +457,20 @@
         </div>
         
         <div id="gameOverScreen" class="screen hidden">
-            <h2 class="game-over">Game Over!</h2>
+            <h2 class="game-over">Mission Failed!</h2>
             <p class="final-score">Your Score: <span id="finalScore">0</span></p>
             <p class="final-score">Coins Collected: <span id="finalCoins">0</span></p>
-            <button id="restartBtn" class="btn">Play Again</button>
+            <button id="restartBtn" class="btn">Try Again</button>
         </div>
     </div>
     
     <div class="controls">
         <p>Click or tap to make the ninja jump. Avoid obstacles and collect coins!</p>
         <p>Survive as long as possible. The game gets harder as you progress.</p>
+    </div>
+
+    <div class="footer">
+        © 2025 All Rights Reserved. Created by Juhi Kini
     </div>
 
     <script>
@@ -307,6 +486,8 @@
         const finalScoreElement = document.getElementById('finalScore');
         const finalCoinsElement = document.getElementById('finalCoins');
         const jumpBtn = document.querySelector('.jump-btn');
+        const characterOptions = document.querySelectorAll('.character-option');
+        const usernameInput = document.getElementById('usernameInput');
         
         // Set canvas dimensions based on container
         function setCanvasSize() {
@@ -317,7 +498,7 @@
             // Adjust game elements based on screen size
             const isMobile = window.innerWidth <= 768;
             game.ninjaSize = isMobile ? 30 : 40;
-            game.buildingMinHeight = isMobile ? 100 : 150;
+            game.buildingMinHeight = isMobile ? 120 : 180;
             game.initialGapSize = isMobile ? 150 : 200;
         }
         
@@ -339,8 +520,10 @@
             clouds: [],
             gameOver: false,
             ninjaSize: 40,
-            buildingMinHeight: 150,
-            initialGapSize: 200
+            buildingMinHeight: 180,
+            initialGapSize: 200,
+            selectedCharacterColor: '#4cc9f0',
+            playerName: 'Ninja'
         };
         
         // Ninja character
@@ -351,9 +534,73 @@
             height: 60,
             velocityY: 0,
             jumping: false,
-            color: '#2a2a2a',
+            color: '#4cc9f0',
             canJump: true
         };
+
+        // Draw character previews
+        function drawCharacterPreviews() {
+            characterOptions.forEach(option => {
+                const preview = option.querySelector('.character-preview');
+                const color = option.getAttribute('data-color');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = 45;
+                canvas.height = 55;
+                
+                // Draw detailed ninja for preview
+                drawDetailedNinja(ctx, color, 22, 27, 35, 45);
+                
+                preview.innerHTML = '';
+                preview.appendChild(canvas);
+            });
+        }
+
+        // Draw detailed ninja for preview
+        function drawDetailedNinja(ctx, color, x, y, width, height) {
+            // Body
+            ctx.fillStyle = color;
+            ctx.fillRect(x - width/2, y - height/2, width, height);
+            
+            // Head
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(x - width/2 + 4, y - height/2 - 6, width - 8, 10);
+            
+            // Mask
+            ctx.fillStyle = color;
+            ctx.fillRect(x - width/2, y - height/2 - 3, width, 6);
+            
+            // Eyes
+            ctx.fillStyle = 'white';
+            ctx.fillRect(x - width/2 + 6, y - height/2 - 1, 5, 3);
+            ctx.fillRect(x + width/2 - 11, y - height/2 - 1, 5, 3);
+            
+            // Limbs
+            ctx.fillStyle = '#2a2a2a';
+            // Arms
+            ctx.fillRect(x - width/2 - 3, y - height/2 + 6, 3, 15);
+            ctx.fillRect(x + width/2, y - height/2 + 6, 3, 15);
+            // Legs
+            ctx.fillRect(x - width/2 + 4, y + height/2, 6, 12);
+            ctx.fillRect(x + width/2 - 10, y + height/2, 6, 12);
+            
+            // Sword
+            ctx.fillStyle = '#cccccc';
+            ctx.fillRect(x - width/2 - 5, y - height/2 + 3, 2, 20);
+            ctx.fillStyle = '#ffd166';
+            ctx.fillRect(x - width/2 - 6, y - height/2 + 3, 5, 3);
+        }
+
+        // Character selection
+        characterOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                characterOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                game.selectedCharacterColor = option.getAttribute('data-color');
+                ninja.color = game.selectedCharacterColor;
+            });
+        });
 
         // Initialize clouds
         function initClouds() {
@@ -385,6 +632,10 @@
             game.gameOver = false;
             game.lastBuildingX = canvas.width * 0.5;
             
+            // Get player name from input
+            const inputName = usernameInput.value.trim();
+            game.playerName = inputName || 'Ninja';
+            
             // Adjust ninja size for mobile
             ninja.width = game.ninjaSize;
             ninja.height = game.ninjaSize * 1.5;
@@ -393,23 +644,25 @@
             ninja.velocityY = 0;
             ninja.jumping = false;
             ninja.canJump = true;
+            ninja.color = game.selectedCharacterColor;
             
             initClouds();
             
-            // Create initial buildings
+            // Create initial buildings - make first building much longer
             game.buildings.push({
                 x: 0,
-                width: canvas.width * 0.3,
+                width: canvas.width * 0.5,
                 height: game.buildingMinHeight + Math.random() * 50,
                 color: '#1f4068',
                 windows: true,
                 hasCoin: true,
-                hasObstacle: false
+                hasObstacle: false,
+                isFirstBuilding: true
             });
             
             game.buildings.push({
-                x: canvas.width * 0.5,
-                width: canvas.width * 0.2,
+                x: canvas.width * 0.55,
+                width: canvas.width * 0.3,
                 height: game.buildingMinHeight + Math.random() * 80,
                 color: '#2c5288',
                 windows: true,
@@ -423,14 +676,20 @@
         // Generate a new building
         function generateBuilding() {
             const gap = game.gapSize + Math.random() * 50;
-            const width = 80 + Math.random() * 120;
-            const height = game.buildingMinHeight + Math.random() * 100;
+            let width = 100 + Math.random() * 150;
+            let height = game.buildingMinHeight + Math.random() * 120;
             const colors = ['#1f4068', '#2c5288', '#3a6496', '#1a3658'];
             const color = colors[Math.floor(Math.random() * colors.length)];
             
             // Ensure coins and obstacles don't spawn on same building
             const hasCoin = Math.random() < 0.6;
             const hasObstacle = !hasCoin && Math.random() < 0.5;
+            
+            // Make buildings with obstacles much larger for better gameplay
+            if (hasObstacle) {
+                width *= 1.5;
+                height *= 1.2;
+            }
             
             const newBuilding = {
                 x: game.lastBuildingX + gap,
@@ -532,7 +791,7 @@
                 
                 for (let row = 0; row < windowRows; row++) {
                     for (let col = 0; col < windowCols; col++) {
-                        if (Math.random() > 0.3) { // Some windows are lit
+                        if (Math.random() > 0.3) {
                             ctx.fillStyle = Math.random() > 0.7 ? '#ffd166' : '#4cc9f0';
                             ctx.fillRect(
                                 building.x + 10 + col * 30,
@@ -551,39 +810,79 @@
             ctx.strokeRect(building.x, canvas.height - building.height, building.width, building.height);
         }
         
-        // Draw detailed ninja
+        // Draw detailed ninja with selected color
         function drawNinja() {
-            // Ninja body
-            ctx.fillStyle = '#2a2a2a';
+            const x = ninja.x + ninja.width/2;
+            const y = ninja.y + ninja.height/2;
+            
+            // Body
+            ctx.fillStyle = ninja.color;
             ctx.fillRect(ninja.x, ninja.y, ninja.width, ninja.height);
             
-            // Ninja head
+            // Head
             ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(ninja.x + 5, ninja.y - 10, ninja.width - 10, 15);
+            ctx.fillRect(ninja.x + 5, ninja.y - 12, ninja.width - 10, 15);
             
-            // Ninja mask
-            ctx.fillStyle = '#e94560';
-            ctx.fillRect(ninja.x, ninja.y - 5, ninja.width, 10);
+            // Mask
+            const maskGradient = ctx.createLinearGradient(ninja.x, ninja.y - 6, ninja.x, ninja.y + 2);
+            maskGradient.addColorStop(0, ninja.color);
+            maskGradient.addColorStop(1, lightenColor(ninja.color, 30));
+            ctx.fillStyle = maskGradient;
+            ctx.fillRect(ninja.x, ninja.y - 6, ninja.width, 8);
             
-            // Ninja eyes
+            // Eyes
             ctx.fillStyle = 'white';
-            ctx.fillRect(ninja.x + 8, ninja.y - 3, 8, 5);
-            ctx.fillRect(ninja.x + 24, ninja.y - 3, 8, 5);
+            const blink = Math.sin(game.score * 0.1) > 0.9 ? 1 : 4;
+            ctx.fillRect(ninja.x + 8, ninja.y - 4, 8, blink);
+            ctx.fillRect(ninja.x + 24, ninja.y - 4, 8, blink);
             
-            // Ninja limbs
+            // Eye pupils
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(ninja.x + 10, ninja.y - 3, 4, 2);
+            ctx.fillRect(ninja.x + 26, ninja.y - 3, 4, 2);
+            
+            // Limbs
             ctx.fillStyle = '#2a2a2a';
-            // Arms
-            ctx.fillRect(ninja.x - 5, ninja.y + 10, 5, 25);
-            ctx.fillRect(ninja.x + ninja.width, ninja.y + 10, 5, 25);
-            // Legs
-            ctx.fillRect(ninja.x + 5, ninja.y + ninja.height, 10, 20);
-            ctx.fillRect(ninja.x + 25, ninja.y + ninja.height, 10, 20);
+            const armSwing = ninja.jumping ? Math.sin(game.score * 0.2) * 3 : 0;
             
-            // Sword on back
+            // Arms
+            ctx.fillRect(ninja.x - 5, ninja.y + 10 + armSwing, 5, 25);
+            ctx.fillRect(ninja.x + ninja.width, ninja.y + 10 - armSwing, 5, 25);
+            
+            // Legs
+            const legOffset = ninja.jumping ? 0 : Math.sin(game.score * 0.3) * 2;
+            ctx.fillRect(ninja.x + 5, ninja.y + ninja.height, 10, 20 + legOffset);
+            ctx.fillRect(ninja.x + 25, ninja.y + ninja.height, 10, 20 - legOffset);
+            
+            // Sword
             ctx.fillStyle = '#cccccc';
             ctx.fillRect(ninja.x - 8, ninja.y + 5, 3, 30);
-            ctx.fillStyle = '#ffd166';
+            
+            // Sword handle
+            ctx.fillStyle = '#8b4513';
             ctx.fillRect(ninja.x - 10, ninja.y + 5, 7, 5);
+            
+            // Sword guard
+            ctx.fillStyle = '#ffd166';
+            ctx.fillRect(ninja.x - 12, ninja.y + 8, 11, 2);
+            
+            // Player name above head (only show briefly)
+            if (game.score < 100) {
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(game.playerName, x, ninja.y - 20);
+            }
+        }
+
+        // Helper function to lighten colors
+        function lightenColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
         }
         
         // Update game state
@@ -865,6 +1164,9 @@
                 init();
             }
         });
+        
+        // Draw character previews on load
+        window.addEventListener('load', drawCharacterPreviews);
         
         // Start the game loop
         gameLoop();
